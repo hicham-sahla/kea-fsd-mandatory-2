@@ -1,4 +1,24 @@
 {
+  "name": "kea-fsd-mandatory-2",
+  "version": "1.0.0",
+  "description": "Mandatory assignment 2",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "gulp": "gulp",
+    "dev": "npm-run-all --parallel  start gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hicham-sahla/kea-fsd-mandatory-2"
+  },
+  "keywords": [],
+  "author": "Hicham Sahla",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hicham-sahla/kea-fsd-mandatory-2/issues"
+  },
+  "homepage": "https://github.com/hicham-sahla/kea-fsd-mandatory-2#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "bootstrap": "^5.2.3",
