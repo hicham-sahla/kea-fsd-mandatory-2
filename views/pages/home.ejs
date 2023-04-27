@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <%- include('../partials/head'); %>
-</head>
-<body class="body-home">
-    <header class="header-home">
-    </header>
-    <main class="main-home">
-        <h1>Have all your series in one place</h1>
-        <p>Make an account to start your journey to have all your series in one place</p>
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container" id="users-index">
+    <header><%- include('../partials/header'); %></header>
 
-        <div>
-            <a href="/login">Sign in</a>
-            <a href="/signup">Sign up</a>
-        </div>
+    <main class="row d-flex justify-content-center">
+      <section class="col-sm-8 py-4 text-center">
+       
+<h1>KEA assignment 2</h1>
+<h3>Login or create an account</h3>
+<a class="btn btn-primary mt-4" href="/login">Log in</a>
+<a class="btn btn-outline-primary mt-4" href="/signup" class="btn">Sign up</a>
+      </section>
     </main>
-    <img class="logo" src="../dist/img/logo.svg" alt="Logo">
-    <script src="../dist/js/visibility.js"></script>
-</body>
+
+    <footer><%- include('../partials/footer'); %></footer>
+    </section>
+  </body>
 </html>

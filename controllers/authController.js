@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 // handle errors
 const handleErrors = (err) => {
-  let errors = { email: "", password: "" };
+  let errors = { email: "", password: "", username: "", birthDate: "", personalColor: "", city: "", bio: "", petCategory: "" };
 
   // incorrect email
   if (err.message === "incorrect email") {
@@ -49,10 +49,10 @@ const login_get = (req, res) => {
 };
 
 const signup_post = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, username, birthDate, personalColor, city } = req.body;
 
   try {
-    const user = await User.create({ email, password });
+    const user = await User.create({ email, password, username, birthDate, personalColor, city});
     const token = createToken(user._id);
     res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(201).json({ user: user._id });
@@ -77,11 +77,13 @@ const login_post = async (req, res) => {
 };
 
 
-
-
 const logout_get = (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
   res.redirect("/");
+};
+
+const password_reset = (req, res) => {
+  res.render("auth/passwordreset");
 };
 
 module.exports = {
@@ -90,4 +92,5 @@ module.exports = {
   login_get,
   login_post,
   logout_get,
+  password_reset,
 };

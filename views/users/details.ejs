@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container" id="user-details">
+    <header><%- include('../partials/header'); %></header>
+
+    <main>
+      <section class="row d-flex justify-content-center">
+        <div class="col-8">
+          <ul class="list-group list-group-flush text-center">
+            <li
+              class="list-group-item text-white"
+              style="background-color: <%= user.personalColor %>"
+            >
+              <%= user.username %>
+            </li>
+            <li class="list-group-item"><%= user.city %></li>
+            <li class="list-group-item"><a href="mailto:<%= user.email %>"><%= user.email %></a></li>
+          </ul>
+          <a class="delete btn btn-danger mt-3" data-doc="<%= user._id %>"
+            >delete</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const trashcan = document.querySelector("a.delete");
+      trashcan.addEventListener("click", (e) => {
+        const endpoint = `/users/${trashcan.dataset.doc}`;
+        fetch(endpoint, {
+          method: "DELETE",
+        })
+          .then((response) => response.json())
+          .then((data) => (window.location.href = data.redirect))
+          .catch((err) => console.log(err));
+      });
+    </script>
+    <footer><%- include('../partials/footer'); %></footer>
+  </body>
+</html>
