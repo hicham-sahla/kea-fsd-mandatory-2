@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 // handle errors
 const handleErrors = (err) => {
-  let errors = { email: "", password: "", username: "", birthDate: "", personalColor: "", city: "", bio: "", petCategory: "" };
+  let errors = { email: "", password: "" };
 
   // incorrect email
   if (err.message === "incorrect email") {
@@ -49,10 +49,10 @@ const login_get = (req, res) => {
 };
 
 const signup_post = async (req, res) => {
-  const { email, password, username, birthDate, personalColor, city } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await User.create({ email, password, username, birthDate, personalColor, city});
+    const user = await User.create({ email, password });
     const token = createToken(user._id);
     res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(201).json({ user: user._id });
@@ -76,14 +76,46 @@ const login_post = async (req, res) => {
   }
 };
 
+const user_like_post = (req, res) => {
+  const token = req.cookies.jwt;
+  jwt.verify(token, "secret", async (err, decodedToken) => {
+    if (err) console.log(err); // eg. invalid token, or expired token
+    let user = await User.findById(decodedToken.id);
+    const newLike = req.body.serieId;
+    const filter = { _id: user.id };
+    const update = { likes: user.likes };
+    if (!user.likes) {
+      user.likes = [];
+    }
+
+    user.likes.push(newLike); // push is undefined want bovenstaande zijn niet beschikbaar
+    User.findOneAndUpdate(filter, update).then(() => res.redirect("/series"));
+  });
+};
+
+const user_dislike_post = (req, res) => {
+  const token = req.cookies.jwt;
+  jwt.verify(token, "secret", async (err, decodedToken) => {
+    if (err) console.log(err); // eg. invalid token, or expired token
+    let user = await User.findById(decodedToken.id);
+    const newLike = req.body.serieId;
+    const filter = { _id: user.id };
+    if (!user.likes) {
+      user.likes = [];
+    }
+    const filteredLikesList = user.likes.filter((like) => {
+      return like !== newLike;
+    });
+    const update = { likes: filteredLikesList };
+    User.findOneAndUpdate(filter, update).then(() => {
+      res.redirect("/series");
+    });
+  });
+};
 
 const logout_get = (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
   res.redirect("/");
-};
-
-const password_reset = (req, res) => {
-  res.render("auth/passwordreset");
 };
 
 module.exports = {
@@ -91,6 +123,7 @@ module.exports = {
   signup_post,
   login_get,
   login_post,
+  user_like_post,
+  user_dislike_post,
   logout_get,
-  password_reset,
 };

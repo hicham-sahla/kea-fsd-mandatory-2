@@ -15,22 +15,8 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please enter a password"],
     minlength: [6, "Minimum password length is 6 characters"],
   },
-  username: {
-    type: String,
-    required: [true, "Please enter an username"],
-    minlength: [4, "Minimum username length is 4 characters"],
-  },
-  birthDate: {
-    type: Date,
-    required: [true, "Please enter an birth date"],
-  },
-  personalColor: {
-    type: String,
-    required: [true, "Please select a personalcolor"],
-  },
-  city: {
-    type: String,
-    required: [true, "Please select a city"],
+  likes: {
+    type: Array,
   },
 });
 
