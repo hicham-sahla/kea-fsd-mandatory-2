@@ -19,7 +19,7 @@ gulp.task("css", async function () {
         uglyComments: true,
       })
     )
-    .pipe(gulp.dest("./public/dist/css/min"));
+    .pipe(gulp.dest("./public/dist/css/dist"));
 });
 
 // gedeelte om de tasks te automatiseren en de ugly versie te updaten bij elke aanpassing
