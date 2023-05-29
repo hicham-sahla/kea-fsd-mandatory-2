@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body class="body-details">
+  <header class="header-details">
+    <nav>
+      <a href="/series"></a>
+    </nav>
+    <img src="<%= series.img %>" alt="<%= series.title %>">
+    <div class="overlay-details"></div>
+  </header>
+  <main class="main-details">
+      <h1><%= series.title %></h1>
+      <ul class="header-genres">
+        <% series.genres.forEach(genre => { %>
+          <li><%= genre.charAt(0).toUpperCase() + genre.slice(1)%></li>
+        <%}); %>
+    </ul>
+    <h2>About</h2>
+    <p><%= series.about %></p>
+  </main>
+  <script src="../dist/js/visibility.js"></script>
+</body>
+</html>
