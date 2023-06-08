@@ -17,7 +17,7 @@ const handleErrors = (err) => {
 
   // duplicate email error
   if (err.code === 11000) {
-    errors.email = "that email is already registered";
+    errors.email = "That email is already registered";
     return errors;
   }
 
@@ -56,9 +56,24 @@ const signup_post = async (req, res) => {
     const token = createToken(user._id);
     res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(201).json({ user: user._id });
+
+    // Emit a custom event to the client indicating the signup success
+    const io = req.app.get("io"); // Access the `io` instance from the app
+    if (io) {
+      io.to(user._id).emit("signupSuccess", { user: user._id });
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
   } catch (err) {
     const errors = handleErrors(err);
     res.status(400).json({ errors });
+
+    const io = req.app.get("io"); // Access the `io` instance from the app
+    if (io) {
+      io.to(user._id).emit("signupFailure", { error: errors.email });
+    } else {
+      console.error("Socket.io is not initialized.");
+    }
   }
 };
 
@@ -70,9 +85,15 @@ const login_post = async (req, res) => {
     const token = createToken(user._id);
     res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(200).json({ user: user._id });
+
+    const io = res.locals.io; // Access the `io` instance from res.locals
+    io.emit("loginSuccess", { user: user._id });
   } catch (err) {
     const errors = handleErrors(err);
     res.status(400).json({ errors });
+
+    const io = res.locals.io;
+    io.emit("loginFailure", { error: errors.email });
   }
 };
 
@@ -116,6 +137,9 @@ const user_dislike_post = (req, res) => {
 const logout_get = (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
   res.redirect("/");
+
+  const io = req.app.get("io"); // Access the `io` instance from the app
+  io.to(req.user._id).emit("logout");
 };
 
 module.exports = {

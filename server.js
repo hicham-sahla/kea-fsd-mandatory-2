@@ -9,6 +9,11 @@ const cookieParser = require("cookie-parser");
 const { checkUser } = require("./middleware/authMiddleware");
 const connectDB = require("./config/dbConn");
 
+// Socket.io setup
+const http = require("http");
+const server = http.createServer(app);
+const io = require("socket.io")(server);
+
 // Defining routes
 const serieRoutes = require("./routes/serieRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -32,13 +37,19 @@ app.set("view engine", "ejs");
 app.get("*", checkUser);
 app.get("/", (req, res) => {
   Serie.find()
-  .lean()
-  .sort({title: 1}) // Hij filtert abc
-  .then(result => {
-    const firstObItem = result[0]
-    res.render("pages/home", {series: firstObItem});
-  })
-})
+    .lean()
+    .sort({ title: 1 })
+    .then((result) => {
+      const firstObItem = result[0];
+      res.render("pages/home", { series: firstObItem });
+    });
+});
+
+// Pass the io instance to the middleware
+app.use((req, res, next) => {
+  res.locals.io = io;
+  next();
+});
 
 app.use(serieRoutes);
 app.use(authRoutes);
@@ -47,8 +58,33 @@ app.use(authRoutes);
 app.use((req, res) => {
   res.status(404).render("pages/404", { title: "404" });
 });
+
+// Socket.io connection event
+io.on("connection", (socket) => {
+  console.log("New socket connection:", socket.id);
+
+  socket.on("login", (credentials) => {
+
+    if (loginSuccessful) {
+      socket.emit("loginSuccess", { user: userData });
+    } else {
+      socket.emit("loginFailure", { error: errorMessage });
+    }
+  });
+
+  socket.on("signup", (userData) => {
+ 
+    if (signupSuccessful) {
+      socket.emit("signupSuccess", { user: newUser });
+    } else {
+      socket.emit("signupFailure", { error: errorMessage });
+    }
+  });
+
+});
+
 // Check if the connection to the database can be established
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
