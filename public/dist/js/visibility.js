@@ -1,5 +1,3 @@
-console.log("Visibility");
-
 let boolean = document.hidden;
 let link = document.querySelector("link[rel~='icon']");
 
